@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geoke — Rank Where AI Looks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS — extracted from Logo-geoke.svg
+   Primary:  #40FFB1  (mint green, light end)
+   Deep:     #0A9E46  (forest green, dark end)
+   BG:       quasi-nero saturo di verde
+   Font:     Plus Jakarta Sans
+═══════════════════════════════════════════════════ */
+:root {
+  --bg0: #04090A;
+  --bg1: #070E0C;
+  --bg2: #0A1510;
+  --bg3: #0D1B14;
+  --bg4: #112118;
+  --bg5: #152819;
+
+  --mint:    #40FFB1;
+  --mint-d:  #28E899;
+  --green:   #0A9E46;
+  --green-l: #0CC452;
+
+  --glow:    rgba(64,255,177,.13);
+  --glow-sm: rgba(64,255,177,.07);
+  --glow-xs: rgba(64,255,177,.04);
+
+  --tx:  #DFF2EA;
+  --tx2: #6B9E84;
+  --tx3: #3A5E47;
+  --tx4: #1F3629;
+
+  --b:   rgba(64,255,177,.09);
+  --bh:  rgba(64,255,177,.20);
+  --bs:  rgba(64,255,177,.38);
+
+  --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 7px;
+  --rl: 13px;
+}
+
+/* ─── RESET ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg1);
+  color:var(--tx);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+
+/* ─── GRAIN ─── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.025;pointer-events:none;z-index:9999;
+}
+
+/* ─── LAYOUT ─── */
+.w{max-width:1100px;margin:0 auto;padding:0 28px;position:relative;z-index:1}
+.sec{padding:96px 0}
+
+/* ─── ANIMATIONS ─── */
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 5px var(--mint)}50%{box-shadow:0 0 14px var(--mint)}}
+@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
+
+/* ════════════════════════════════════════
+   NAV
+════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:56px;
+  border-bottom:1px solid var(--b);
+  background:rgba(7,14,12,.8);
+  backdrop-filter:blur(22px) saturate(180%);
+  -webkit-backdrop-filter:blur(22px) saturate(180%);
+  transition:border-color .3s;
+}
+nav.up{border-bottom-color:var(--bh)}
+
+.nav-w{
+  display:flex;align-items:center;justify-content:space-between;
+  height:100%;max-width:1100px;margin:0 auto;padding:0 28px;
+}
+
+.nav-logo{display:flex;align-items:center;gap:0}
+/* Scale the full logo SVG down in nav */
+.nav-logo svg{height:22px;width:auto}
+
+.nav-links{display:flex;align-items:center;gap:0;list-style:none}
+.nav-links a{
+  padding:5px 12px;
+  font-size:13.5px;font-weight:500;
+  color:var(--tx2);border-radius:var(--r);
+  transition:color .15s,background .15s;
+}
+.nav-links a:hover{color:var(--tx);background:var(--glow-xs)}
+
+.nav-r{display:flex;align-items:center;gap:8px}
+.btn-ghost{
+  padding:6px 14px;font-size:13.5px;font-weight:600;
+  color:var(--tx3);border-radius:var(--r);
+  transition:color .15s;
+}
+.btn-ghost:hover{color:var(--tx2)}
+
+.btn-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 17px;
+  font-size:13px;font-weight:700;letter-spacing:-.15px;
+  color:var(--bg0);background:var(--mint);
+  border-radius:var(--r);
+  transition:transform .15s,box-shadow .2s,background .15s;
+}
+.btn-cta:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(64,255,177,.3);
+  background:#52FFB8;
+}
+
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+.hero{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 400px;
+  align-items:center;
+  gap:48px;
+  padding-top:56px;
+  overflow:hidden;
+  position:relative;
+}
+
+/* Radial glow: "quasi nero, verde più intenso ai bordi" */
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 60% at 28% 50%, rgba(64,255,177,.055) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 70% at 100% 0%,  rgba(10,158,70,.06)  0%, transparent 55%),
+    radial-gradient(ellipse 55% 55% at 0% 100%,  rgba(64,255,177,.05) 0%, transparent 55%);
+  pointer-events:none;
+}
+/* Subtle grid */
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle, rgba(64,255,177,.13) 1px, transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse 70% 90% at 28% 50%, rgba(0,0,0,.6) 10%, transparent 80%);
+  pointer-events:none;
+}
+
+.hero-l{position:relative;z-index:2;padding:80px 0}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:4px 12px 4px 7px;
+  border:1px solid var(--bh);
+  border-radius:100px;
+  background:var(--glow-sm);
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;
+  color:var(--mint);text-transform:uppercase;
+  margin-bottom:26px;
+  animation:up .45s ease both;
+}
+.bdot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--mint);
+  animation:pulse 2.5s ease infinite;
+}
+
+.hero h1{
+  font-size:clamp(48px,6.2vw,80px);
+  font-weight:800;
+  letter-spacing:-.04em;
+  line-height:1.04;
+  color:var(--tx);
+  margin-bottom:22px;
+  animation:up .45s .06s ease both;
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--mint) 0%,var(--mint-d) 50%,var(--green-l) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.hero-sub{
+  font-size:clamp(15px,1.7vw,17.5px);
+  color:var(--tx2);line-height:1.7;
+  max-width:500px;margin-bottom:36px;
+  animation:up .45s .12s ease both;
+}
+
+.hero-acts{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  animation:up .45s .18s ease both;
+}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 26px;
+  font-size:15px;font-weight:700;letter-spacing:-.2px;
+  color:var(--bg0);background:var(--mint);
+  border-radius:var(--r);
+  transition:transform .2s,box-shadow .2s,background .15s;
+}
+.btn-hero:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 36px rgba(64,255,177,.3);
+  background:#52FFB8;
+}
+.btn-hero svg{transition:transform .2s}
+.btn-hero:hover svg{transform:translateX(3px)}
+
+.btn-ol{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:13px 20px;
+  font-size:15px;font-weight:600;color:var(--tx2);
+  border:1px solid var(--bh);border-radius:var(--r);
+  transition:color .15s,border-color .15s,background .15s;
+}
+.btn-ol:hover{color:var(--tx);border-color:var(--bs);background:var(--glow-sm)}
+
+.hero-micro{
+  display:flex;align-items:center;gap:18px;
+  margin-top:16px;
+  font-size:12px;color:var(--tx4);
+  animation:up .45s .24s ease both;
+}
+.hero-micro span{display:flex;align-items:center;gap:4px}
+.hero-micro span::before{
+  content:'✓';color:var(--green-l);
+  font-size:10px;font-weight:800;
+}
+
+/* Hero right — score cards */
+.hero-r{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;gap:10px;
+  padding:80px 0;
+  animation:up .55s .28s ease both;
+}
+
+.hcard{
+  background:var(--bg3);
+  border:1px solid var(--b);
+  border-radius:var(--rl);
+  padding:16px 18px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.hcard:hover{
+  border-color:var(--bh);
+  box-shadow:0 0 30px var(--glow-xs);
+}
+
+.hcard-lbl{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  color:var(--tx3);letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:10px;
+}
+.score-row{display:flex;align-items:baseline;gap:6px;margin-bottom:10px}
+.score-v{
+  font-size:38px;font-weight:800;letter-spacing:-.05em;
+  color:var(--tx);line-height:1;
+}
+.score-u{font-size:13px;color:var(--tx3);font-weight:500}
+.score-up{
+  font-size:10.5px;font-weight:700;
+  color:var(--mint);
+  background:rgba(64,255,177,.1);
+  padding:2px 6px;border-radius:4px;margin-left:3px;
+}
+.bar{height:3px;background:var(--bg5);border-radius:2px;overflow:hidden}
+.bar-f{
+  height:100%;border-radius:2px;
+  background:linear-gradient(90deg,var(--green),var(--mint));
+  transition:width 1.8s cubic-bezier(.22,1,.36,1);
+}
+
+/* Engine chips inside card */
+.eng-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.echip{
+  display:flex;align-items:center;gap:4px;
+  padding:3px 8px;
+  background:var(--bg2);border:1px solid var(--b);
+  border-radius:100px;
+  font-size:10px;font-weight:600;color:var(--tx3);
+  transition:border-color .15s,color .15s;
+}
+.echip:hover{border-color:var(--bh);color:var(--tx2)}
+.ed{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.em{background:#40FFB1}.eb{background:#74B9FF}
+.ep{background:#C47AFF}.eo{background:#FFA557}
+.er{background:#FF6450}.ec{background:#00D4FF}
+
+/* Quadrant card */
+.qcard{
+  background:var(--bg3);
+  border:1px solid var(--b);
+  border-radius:var(--rl);
+  padding:16px;
+  transition:border-color .2s;
+}
+.qcard:hover{border-color:var(--bh)}
+.qcard-hd{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;
+}
+.live-dot{
+  display:flex;align-items:center;gap:4px;
+  font-size:9px;font-weight:700;color:var(--mint);
+}
+.live-dot::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--mint);animation:pulse 2s ease infinite;
+}
+.qgrid{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  border-radius:6px;overflow:hidden;
+}
+.qz{
+  padding:11px 10px;
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  position:relative;
+}
+.qz-l{background:rgba(64,255,177,.16);color:var(--mint)}
+.qz-e{background:rgba(10,158,70,.12);color:#0A9E46}
+.qz-w{background:rgba(17,33,24,.7);color:var(--tx4)}
+.qz-c{background:rgba(255,90,70,.09);color:#FF6555}
+.you-tag{
+  display:inline-flex;align-items:center;
+  margin-top:4px;padding:1px 5px;border-radius:3px;
+  background:var(--mint);color:var(--bg0);
+  font-size:8px;font-weight:900;letter-spacing:.04em;
+}
+
+/* ════════════════════════════════════════
+   AI ENGINES BAR
+════════════════════════════════════════ */
+.ebar{
+  border-top:1px solid var(--b);border-bottom:1px solid var(--b);
+  background:var(--bg2);padding:16px 0;
+}
+.ebar-i{
+  display:flex;align-items:center;justify-content:center;
+  gap:8px;flex-wrap:wrap;
+}
+.ebar-lbl{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  color:var(--tx4);letter-spacing:.09em;text-transform:uppercase;
+  margin-right:4px;
+}
+.epill{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 13px;
+  border:1px solid var(--b);border-radius:100px;
+  font-size:12px;font-weight:600;color:var(--tx3);
+  background:var(--bg3);
+  transition:border-color .15s,color .15s,transform .15s;
+}
+.epill:hover{border-color:var(--bh);color:var(--tx);transform:translateY(-1px)}
+
+/* ════════════════════════════════════════
+   SECTION COMMON
+════════════════════════════════════════ */
+.eyebrow{
+  display:inline-block;
+  font-family:var(--mono);font-size:10.5px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mint);margin-bottom:16px;
+}
+.sh2{
+  font-size:clamp(26px,3.5vw,42px);
+  font-weight:800;letter-spacing:-.035em;line-height:1.1;
+  margin-bottom:12px;
+}
+.sh2 em{font-style:normal;color:var(--mint)}
+.sp{font-size:16px;color:var(--tx2);line-height:1.65;max-width:480px}
+
+/* ════════════════════════════════════════
+   PROBLEM
+════════════════════════════════════════ */
+.prob{padding:96px 0;text-align:center}
+.prob .sh2{max-width:680px;margin:0 auto 16px}
+.prob .sp{margin:0 auto}
+
+.prob3{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  max-width:780px;margin:52px auto 0;
+  border:1px solid var(--b);border-radius:var(--rl);overflow:hidden;
+}
+.pi{
+  padding:28px 24px;
+  border-right:1px solid var(--b);
+  text-align:left;
+  transition:background .2s;
+}
+.pi:last-child{border-right:none}
+.pi:hover{background:var(--glow-xs)}
+.pin{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  color:var(--mint);letter-spacing:.1em;margin-bottom:8px;
+}
+.pit{font-size:14px;font-weight:600;color:var(--tx);line-height:1.4}
+
+/* ════════════════════════════════════════
+   6 CLAIMS
+════════════════════════════════════════ */
+.claims{padding:80px 0 100px}
+.sh-wrap{margin-bottom:60px}
+
+.cgrid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--b);
+  border:1px solid var(--b);border-radius:var(--rl);overflow:hidden;
+}
+.cc{
+  background:var(--bg3);
+  padding:32px 28px;
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+  transition:background .2s;
+}
+.cc:hover{background:var(--bg4)}
+.cc::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--mint),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.cc:hover::after{opacity:.5}
+.cc-n{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  color:var(--tx4);letter-spacing:.12em;margin-bottom:16px;
+}
+.cc-ico{
+  width:38px;height:38px;
+  border:1px solid var(--bh);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;background:var(--glow-sm);
+  margin-bottom:16px;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+}
+.cc:hover .cc-ico{border-color:var(--mint);background:var(--glow);box-shadow:0 0 16px var(--glow-sm)}
+.cc h3{font-size:16px;font-weight:700;letter-spacing:-.02em;color:var(--tx);line-height:1.3;margin-bottom:10px}
+.cc p{font-size:13px;color:var(--tx2);line-height:1.7;flex:1}
+.cc-tag{
+  margin-top:16px;
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--mint);
+}
+
+/* ════════════════════════════════════════
+   HOW IT WORKS
+════════════════════════════════════════ */
+.how{padding:80px 0 100px;border-top:1px solid var(--b)}
+.steps{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;margin-top:52px;position:relative;
+}
+.steps::before{
+  content:'';position:absolute;
+  top:24px;left:26px;right:26px;height:1px;
+  background:linear-gradient(90deg,var(--mint) 0%,var(--mint-d) 30%,var(--green) 65%,transparent 100%);
+  z-index:0;
+}
+.step{padding:0 22px 0 0;position:relative;z-index:1}
+.sn{
+  width:50px;height:50px;
+  border:1px solid var(--bh);border-radius:var(--r);
+  background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:12px;font-weight:700;color:var(--mint);
+  margin-bottom:20px;
+  transition:background .2s,border-color .2s,box-shadow .2s;
+}
+.step:hover .sn{background:var(--glow);border-color:var(--mint);box-shadow:0 0 20px var(--glow)}
+.step h4{font-size:14.5px;font-weight:700;letter-spacing:-.01em;color:var(--tx);margin-bottom:7px}
+.step p{font-size:12.5px;color:var(--tx2);line-height:1.65}
+
+/* ════════════════════════════════════════
+   QUADRANT BIG
+════════════════════════════════════════ */
+.qsec{padding:80px 0 100px}
+.qsplit{
+  display:grid;grid-template-columns:1fr 460px;
+  gap:60px;align-items:center;margin-top:52px;
+}
+.qt h2{font-size:clamp(26px,3.5vw,42px);font-weight:800;letter-spacing:-.035em;line-height:1.1;margin-top:12px}
+.qt p{font-size:15.5px;color:var(--tx2);line-height:1.7;margin-top:14px;max-width:400px}
+.qouts{margin-top:28px;display:flex;flex-direction:column;gap:9px}
+.qo{
+  display:flex;align-items:flex-start;gap:11px;
+  padding:12px 14px;border:1px solid var(--b);border-radius:var(--r);
+  transition:border-color .15s,background .15s;
+}
+.qo:hover{border-color:var(--bh);background:var(--glow-xs)}
+.qodot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0}
+.qo-tit{font-size:12.5px;font-weight:700;color:var(--tx)}
+.qo-desc{font-size:12px;color:var(--tx2);margin-top:1px}
+
+.qviz{
+  background:var(--bg3);border:1px solid var(--b);
+  border-radius:var(--rl);padding:20px;
+}
+.qviz-hd{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:9.5px;font-weight:600;
+  color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;
+  margin-bottom:5px;
+}
+.qviz-ylbl{
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  color:var(--tx4);text-align:center;letter-spacing:.07em;text-transform:uppercase;
+  margin-bottom:5px;
+}
+.qzones{
+  display:grid;grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:2px;height:300px;
+  border-radius:var(--r);overflow:hidden;
+}
+.qzone{
+  padding:14px 12px;
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  position:relative;overflow:hidden;
+}
+.zone-l{background:rgba(64,255,177,.15);color:var(--mint)}
+.zone-e{background:rgba(10,158,70,.10);color:#0A9E46}
+.zone-w{background:rgba(17,33,24,.8);color:var(--tx4)}
+.zone-c{background:rgba(255,90,70,.08);color:#FF6555}
+.bdot-you{
+  position:absolute;width:14px;height:14px;border-radius:50%;
+  background:var(--mint);
+  box-shadow:0 0 18px var(--mint),0 0 6px var(--mint);
+  bottom:28px;right:30px;
+}
+.bdot-you::after{
+  content:'YOU';position:absolute;
+  bottom:18px;right:-3px;
+  font-size:7.5px;font-weight:900;color:var(--mint);letter-spacing:.05em;
+  text-shadow:0 0 8px var(--mint);
+  white-space:nowrap;
+}
+.bdot-c1{position:absolute;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.2);bottom:34px;left:22px}
+.bdot-c2{position:absolute;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.12);top:20px;right:42px}
+.qviz-xlbls{
+  display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  color:var(--tx4);letter-spacing:.06em;text-transform:uppercase;
+  margin-top:10px;padding:0 3px;
+}
+
+/* ════════════════════════════════════════
+   STATS
+════════════════════════════════════════ */
+.stats{
+  border-top:1px solid var(--b);border-bottom:1px solid var(--b);
+  background:var(--bg2);
+}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{
+  padding:36px 28px;
+  border-right:1px solid var(--b);
+  transition:background .2s;
+}
+.stat:last-child{border-right:none}
+.stat:hover{background:var(--glow-xs)}
+.sv{
+  font-size:44px;font-weight:800;letter-spacing:-.05em;
+  color:var(--tx);line-height:1;
+}
+.sv span{
+  background:linear-gradient(135deg,var(--mint),var(--mint-d));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sl{font-size:12.5px;color:var(--tx2);margin-top:7px;font-weight:500;line-height:1.45}
+
+/* ════════════════════════════════════════
+   PRICING
+════════════════════════════════════════ */
+.pricing{padding:80px 0 100px}
+.pgrid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:14px;margin-top:52px;align-items:start;
+}
+.plan{
+  background:var(--bg3);
+  border:1px solid var(--b);border-radius:var(--rl);
+  padding:26px;position:relative;
+  transition:transform .2s,border-color .25s,box-shadow .25s;
+}
+.plan:hover{transform:translateY(-3px)}
+.plan-hot{
+  border-color:var(--mint);
+  box-shadow:0 0 50px var(--glow-xs);
+}
+.plan-hot:hover{box-shadow:0 0 70px var(--glow-sm)}
+.pbadge{
+  position:absolute;top:-11px;left:22px;
+  padding:3px 10px;
+  background:var(--mint);color:var(--bg0);
+  font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  border-radius:100px;
+}
+.ptier{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tx3);margin-bottom:5px;
+}
+.pprice{
+  font-size:36px;font-weight:800;letter-spacing:-.05em;
+  color:var(--tx);line-height:1;
+}
+.pprice sup{font-size:18px;vertical-align:super;letter-spacing:0}
+.pprice sub{font-size:13px;font-weight:500;color:var(--tx2);vertical-align:baseline}
+.pdesc{font-size:12.5px;color:var(--tx2);margin:8px 0 20px;line-height:1.5}
+.phr{height:1px;background:var(--b);margin-bottom:18px}
+.pfeats{display:flex;flex-direction:column;gap:8px;list-style:none}
+.pfeat{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--tx2)}
+.pfeat::before{content:'✓';color:var(--mint);font-size:10px;font-weight:700;margin-top:2px;flex-shrink:0}
+.pbtn{
+  display:flex;justify-content:center;align-items:center;
+  margin-top:22px;padding:10px;
+  border-radius:var(--r);
+  font-size:13.5px;font-weight:700;letter-spacing:-.15px;
+  transition:transform .15s,box-shadow .15s,background .15s,border-color .15s;
+}
+.pbtn-ol{border:1px solid var(--bh);color:var(--tx)}
+.pbtn-ol:hover{border-color:var(--bs);background:var(--glow-sm)}
+.pbtn-fill{background:var(--mint);color:var(--bg0);border:1px solid transparent}
+.pbtn-fill:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(64,255,177,.3);background:#52FFB8}
+
+/* ════════════════════════════════════════
+   USE CASES
+════════════════════════════════════════ */
+.ucases{padding:80px 0 100px;border-top:1px solid var(--b)}
+.ucgrid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--b);
+  border:1px solid var(--b);border-radius:var(--rl);
+  overflow:hidden;margin-top:52px;
+}
+.uc{
+  background:var(--bg3);padding:28px 24px;
+  transition:background .2s;
+}
+.uc:hover{background:var(--bg4)}
+.uc-ico{
+  font-size:24px;margin-bottom:14px;
+  filter:grayscale(30%);
+}
+.uc h4{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:8px}
+.uc p{font-size:13px;color:var(--tx2);line-height:1.65}
+
+/* ════════════════════════════════════════
+   FINAL CTA
+════════════════════════════════════════ */
+.ctasec{
+  padding:100px 0;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 65% at 50% 50%,rgba(64,255,177,.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.ctasec h2{
+  font-size:clamp(34px,5vw,60px);
+  font-weight:800;letter-spacing:-.04em;line-height:1.08;
+  max-width:600px;margin:0 auto 16px;
+  position:relative;z-index:1;
+}
+.ctasec p{font-size:16.5px;color:var(--tx2);margin-bottom:32px;position:relative;z-index:1}
+.cta-row{
+  display:flex;justify-content:center;gap:12px;
+  flex-wrap:wrap;position:relative;z-index:1;
+}
+.cta-micro{
+  display:flex;justify-content:center;align-items:center;gap:18px;
+  margin-top:18px;font-size:11.5px;color:var(--tx4);
+  position:relative;z-index:1;
+}
+.cta-micro span{display:flex;align-items:center;gap:4px}
+.cta-micro span::before{content:'✓';color:var(--green-l);font-size:10px;font-weight:800}
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
+footer{
+  border-top:1px solid var(--b);
+  padding:64px 0 36px;
+  background:var(--bg2);
+}
+.fgrid{
+  display:grid;
+  grid-template-columns:200px repeat(5,1fr);
+  gap:28px;margin-bottom:52px;
+}
+.fbrand svg{height:20px;width:auto;margin-bottom:14px}
+.fbrand p{font-size:12px;color:var(--tx3);line-height:1.6;max-width:170px}
+.fsoc{display:flex;gap:8px;margin-top:16px}
+.fsoc a{
+  color:var(--tx4);transition:color .15s;
+  display:flex;align-items:center;
+}
+.fsoc a:hover{color:var(--mint)}
+
+.fcol h5{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;
+  color:var(--tx2);margin-bottom:14px;
+}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.fcol a{font-size:12.5px;color:var(--tx3);transition:color .15s}
+.fcol a:hover{color:var(--tx)}
+
+.fbot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:26px;border-top:1px solid var(--b);
+  font-size:11.5px;color:var(--tx4);
+}
+.fbot-r{display:flex;gap:18px}
+.fbot-r a{color:var(--tx4);transition:color .15s}
+.fbot-r a:hover{color:var(--tx2)}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;padding-bottom:40px}
+  .hero-r{display:none}
+  .prob3{grid-template-columns:1fr}
+  .pi{border-right:none;border-bottom:1px solid var(--b)}
+  .pi:last-child{border-bottom:none}
+  .cgrid{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr;gap:28px}
+  .steps::before{display:none}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .stat:nth-child(2){border-right:none}
+  .pgrid{grid-template-columns:1fr}
+  .qsplit{grid-template-columns:1fr}
+  .ucgrid{grid-template-columns:1fr 1fr}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .fbot{flex-direction:column;gap:12px;text-align:center}
+}
+@media(max-width:600px){
+  .cgrid{grid-template-columns:1fr}
+  .ucgrid{grid-template-columns:1fr}
+  .hero h1{font-size:42px}
+  .btn-hero,.btn-ol{padding:11px 18px;font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="nav-w">
+    <a href="/" class="nav-logo" aria-label="Geoke home">
+      <!-- Full wordmark SVG — trimmed to icon + GEOKE only, "AI SEES YOU" hidden at nav size -->
+      <svg height="22" viewBox="0 0 268 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ng0" x1="29.2" y1="0" x2="30.4" y2="59.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+          <linearGradient id="ng1" x1="46.4" y1="1.1" x2="13.8" y2="57.2" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+          <linearGradient id="ng2" x1="58.5" y1="12.4" x2="3.6" y2="45.5" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+          <linearGradient id="ng3" x1="59.6" y1="29.8" x2="0" y2="29.8" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+          <linearGradient id="ng4" x1="57.3" y1="46.3" x2="2.6" y2="13.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+          <linearGradient id="ng5" x1="44.8" y1="56.1" x2="14.8" y2="3.7" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+        </defs>
+        <!-- icon petals -->
+        <path opacity=".65" d="M29.8 59.6C33.9 59.6 37.2 46.3 37.2 29.8C37.2 13.3 33.9 0 29.8 0C25.7 0 22.3 13.3 22.3 29.8C22.3 46.3 25.7 59.6 29.8 59.6Z" fill="url(#ng0)"/>
+        <path opacity=".65" d="M36.2 33.5C44.5 19.3 48.2 6.1 44.7 4C41.1 1.9 31.6 11.8 23.3 26.1C15.1 40.3 11.3 53.6 14.9 55.6C18.5 57.7 28 47.8 36.2 33.5Z" fill="url(#ng1)"/>
+        <path opacity=".65" d="M33.5 36.3C47.7 28.0 57.6 18.5 55.6 14.9C53.5 11.3 40.3 15.1 26.1 23.4C11.8 31.6 1.9 41.2 4 44.7C6.1 48.3 19.3 44.5 33.5 36.3Z" fill="url(#ng2)"/>
+        <path opacity=".65" d="M29.8 37.3C46.2 37.3 59.6 33.9 59.6 29.8C59.6 25.7 46.2 22.4 29.8 22.4C13.3 22.4 0 25.7 0 29.8C0 33.9 13.3 37.3 29.8 37.3Z" fill="url(#ng3)"/>
+        <path opacity=".65" d="M55.6 44.7C57.6 41.2 47.7 31.6 33.5 23.4C19.3 15.1 6.0 11.3 4.0 14.9C1.9 18.5 11.8 28.0 26.1 36.3C40.3 44.5 53.5 48.3 55.6 44.7Z" fill="url(#ng4)"/>
+        <path opacity=".65" d="M44.7 55.6C48.2 53.6 44.5 40.3 36.2 26.1C28.0 11.8 18.5 1.9 14.9 4.0C11.3 6.1 15.1 19.3 23.3 33.5C31.6 47.8 41.1 57.7 44.7 55.6Z" fill="url(#ng5)"/>
+        <!-- GEOKE wordmark -->
+        <path d="M89.3 51.8C86.2 51.8 83.3 51.2 80.7 50.1C78.1 49.0 75.7 47.5 73.7 45.5C71.8 43.6 70.2 41.2 69.1 38.6C68 35.9 67.4 33.0 67.4 29.9C67.4 26.7 68.0 23.8 69.0 21.1C70.1 18.5 71.6 16.2 73.6 14.2C75.5 12.2 77.8 10.7 80.4 9.6C83.1 8.6 85.9 8.0 89.0 8.0C92.1 8.0 94.9 8.5 97.4 9.6C99.9 10.6 102.0 12.0 103.7 13.7C105.4 15.4 106.6 17.3 107.4 19.3L99.5 23.1C98.8 21.1 97.5 19.4 95.7 18.0C93.8 16.7 91.6 16.0 89.0 16.0C86.4 16.0 84.3 16.6 82.4 17.8C80.4 18.9 78.9 20.6 77.9 22.6C76.9 24.7 76.3 27.1 76.3 29.9C76.3 32.6 76.9 35.1 78.0 37.2C79.1 39.2 80.6 40.9 82.6 42.1C84.5 43.2 86.7 43.8 89.3 43.8C91.2 43.8 93.0 43.4 94.7 42.7C96.5 42.0 97.8 40.9 98.9 39.5C99.9 38.1 100.5 36.4 100.5 34.4V30.9L104.5 34.3H89.0V26.9H109.4V31.4C109.4 34.9 108.8 37.9 107.6 40.4C106.5 43.0 105.0 45.1 103.0 46.8C101.1 48.5 98.9 49.7 96.5 50.6C94.1 51.4 91.7 51.8 89.3 51.8Z" fill="white"/>
+        <path d="M115.8 51.1V8.7H144.6V16.4H124.7V26.0H143.5V33.7H124.7V43.4H144.6V51.1H115.8Z" fill="white"/>
+        <path d="M172.1 51.8C168.8 51.8 165.9 51.2 163.1 50.1C160.3 49.0 157.9 47.5 155.9 45.5C153.8 43.5 152.2 41.2 151.1 38.5C149.9 35.9 149.4 33.0 149.4 29.9C149.4 26.8 149.9 23.9 151.1 21.2C152.2 18.6 153.8 16.3 155.8 14.3C157.9 12.3 160.3 10.8 163.0 9.7C165.8 8.6 168.8 8.0 172.1 8.0C175.3 8.0 178.3 8.6 181.1 9.7C183.8 10.8 186.2 12.3 188.3 14.3C190.3 16.3 191.9 18.6 193.1 21.2C194.2 23.9 194.8 26.8 194.8 29.9C194.8 33.0 194.2 35.9 193.0 38.5C191.9 41.2 190.3 43.5 188.2 45.5C186.2 47.5 183.8 49.0 181.0 50.1C178.3 51.2 175.3 51.8 172.1 51.8ZM172.1 43.8C174.0 43.8 175.8 43.5 177.5 42.8C179.2 42.1 180.6 41.2 181.9 39.9C183.1 38.7 184.1 37.2 184.8 35.5C185.5 33.8 185.9 31.9 185.9 29.9C185.9 27.8 185.5 25.9 184.8 24.3C184.1 22.6 183.2 21.1 181.9 19.9C180.6 18.6 179.2 17.6 177.5 17.0C175.8 16.3 174.0 16.0 172.1 16.0C170.1 16.0 168.3 16.3 166.6 17.0C165.0 17.7 163.5 18.6 162.2 19.9C161.0 21.1 160.0 22.6 159.3 24.3C158.6 25.9 158.3 27.8 158.3 29.9C158.3 31.9 158.6 33.8 159.3 35.5C160.0 37.2 161.0 38.7 162.2 39.9C163.5 41.2 165.0 42.1 166.6 42.8C168.3 43.5 170.1 43.8 172.1 43.8Z" fill="white"/>
+        <path d="M198.8 51.1V8.7H207.7V29.9L205.2 29.1L222.3 8.7H233.5L216.5 28.9L217.1 22.7L233.8 51.1H223.4L213.0 33.2L207.7 39.5V51.1H198.8Z" fill="white"/>
+        <path d="M239.2 51.1V8.7H268.0V16.4H248.1V26.0H266.8V33.7H248.1V43.4H268.0V51.1H239.2Z" fill="white"/>
+      </svg>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="/product">Product</a></li>
+      <li><a href="/enterprise">Enterprise</a></li>
+      <li><a href="/company">Company</a></li>
+      <li><a href="/pricing">Pricing</a></li>
+    </ul>
+
+    <div class="nav-r">
+      <button class="btn-ghost">Log in</button>
+      <a href="/signup" class="btn-cta">Book a Demo</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-l w" style="grid-column:1;padding-right:0">
+    <div class="hero-badge">
+      <span class="bdot"></span>
+      AI Search Platform
+    </div>
+
+    <h1>Rank Where<br><em>AI Looks.</em></h1>
+
+    <p class="hero-sub">
+      Find out how your brand appears on ChatGPT, Gemini, and Claude —
+      and get everything you need to dominate your AI authority, automatically.
+    </p>
+
+    <div class="hero-acts">
+      <a href="/signup" class="btn-hero">
+        Analyze Your Domain
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#how" class="btn-ol">
+        See how it works
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 9l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-micro">
+      <span>No credit card required</span>
+      <span>Results in minutes</span>
+      <span>Built for agencies</span>
+    </div>
+  </div>
+
+  <!-- Floating live score cards -->
+  <div class="hero-r">
+    <div class="hcard">
+      <div class="hcard-lbl">AI Authority Score</div>
+      <div class="score-row">
+        <div class="score-v">74</div>
+        <div class="score-u">/ 100</div>
+        <div class="score-up">↑ +12</div>
+      </div>
+      <div class="bar"><div class="bar-f" style="width:74%"></div></div>
+    </div>
+
+    <div class="hcard">
+      <div class="hcard-lbl">Visibility Score</div>
+      <div class="score-row">
+        <div class="score-v">61</div>
+        <div class="score-u">/ 100</div>
+        <div class="score-up">↑ +8</div>
+      </div>
+      <div class="bar"><div class="bar-f" style="width:61%"></div></div>
+      <div class="eng-chips">
+        <div class="echip"><span class="ed em"></span>ChatGPT</div>
+        <div class="echip"><span class="ed eb"></span>Gemini</div>
+        <div class="echip"><span class="ed ep"></span>Claude</div>
+        <div class="echip"><span class="ed eo"></span>Perplexity</div>
+        <div class="echip"><span class="ed er"></span>Grok</div>
+        <div class="echip"><span class="ed ec"></span>Copilot</div>
+      </div>
+    </div>
+
+    <div class="qcard">
+      <div class="qcard-hd">
+        <span>AI Influence Quadrant</span>
+        <span class="live-dot">LIVE</span>
+      </div>
+      <div class="qgrid">
+        <div class="qz qz-l">Leader<br><span class="you-tag">YOU</span></div>
+        <div class="qz qz-e">Emerging</div>
+        <div class="qz qz-w">Weak</div>
+        <div class="qz qz-c">Controversial</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     AI ENGINES BAR
+════════════════════════════════════════ -->
+<div class="ebar">
+  <div class="w">
+    <div class="ebar-i">
+      <span class="ebar-lbl">Tracks your visibility across</span>
+      <div class="epill"><span class="ed em"></span>ChatGPT</div>
+      <div class="epill"><span class="ed eb"></span>Gemini</div>
+      <div class="epill"><span class="ed ep"></span>Claude</div>
+      <div class="epill"><span class="ed eo"></span>Perplexity</div>
+      <div class="epill"><span class="ed er"></span>Grok</div>
+      <div class="epill"><span class="ed ec"></span>Copilot</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     PROBLEM
+════════════════════════════════════════ -->
+<section class="prob reveal">
+  <div class="w">
+    <span class="eyebrow">The Shift</span>
+    <h2 class="sh2">If AI doesn't mention you,<br>customers won't find you.</h2>
+    <p class="sp">People have stopped searching. They ask. AI gives one answer — not a list of links. If your brand isn't in that answer, you're invisible.</p>
+    <div class="prob3">
+      <div class="pi reveal d1">
+        <div class="pin">01</div>
+        <div class="pit">Where do you appear in AI answers?</div>
+      </div>
+      <div class="pi reveal d2">
+        <div class="pin">02</div>
+        <div class="pit">Why are competitors mentioned instead?</div>
+      </div>
+      <div class="pi reveal d3">
+        <div class="pin">03</div>
+        <div class="pit">What do you do to fix it — today?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     6 CLAIMS
+════════════════════════════════════════ -->
+<section class="claims">
+  <div class="w">
+    <div class="sh-wrap reveal">
+      <span class="eyebrow">Platform</span>
+      <h2 class="sh2">Not just analytics.<br><em>The full stack.</em></h2>
+      <p class="sp">From visibility scoring to automatic content deployment — one platform, no switching tools.</p>
+    </div>
+    <div class="cgrid">
+      <div class="cc reveal">
+        <div class="cc-n">01</div>
+        <div class="cc-ico">◎</div>
+        <h3>AI Visibility Score</h3>
+        <p>A 0–100 score measuring how frequently your brand appears in AI-generated answers across all six major platforms. Tracked continuously, benchmarked against competitors.</p>
+        <div class="cc-tag">Analysis</div>
+      </div>
+      <div class="cc reveal d1">
+        <div class="cc-n">02</div>
+        <div class="cc-ico">◈</div>
+        <h3>Competitive Intelligence</h3>
+        <p>Map your brand and all competitors across the AI Influence Quadrant. See who dominates which topics — and exactly where you have room to take ground.</p>
+        <div class="cc-tag">Benchmark</div>
+      </div>
+      <div class="cc reveal d2">
+        <div class="cc-n">03</div>
+        <div class="cc-ico">◉</div>
+        <h3>IDPBS — Digital Twins</h3>
+        <p>Intent-Driven, Persona-Based AI Query Simulation. Geoke simulates real user types, generating context-specific queries instead of generic keywords.</p>
+        <div class="cc-tag">Intelligence</div>
+      </div>
+      <div class="cc reveal">
+        <div class="cc-n">04</div>
+        <div class="cc-ico">◧</div>
+        <h3>Site AI Audit</h3>
+        <p>A deep technical and semantic scan of your website. Per-page AI Readiness Score, schema analysis, FAQ coverage. Specific fixes, not vague numbers.</p>
+        <div class="cc-tag">Audit</div>
+      </div>
+      <div class="cc reveal d1">
+        <div class="cc-n">05</div>
+        <div class="cc-ico">◬</div>
+        <h3>Content Blueprint & Auto-Deploy</h3>
+        <p>Geoke generates FAQs, page outlines, and schema markup — then publishes them to your site automatically via WordPress or Shopify connector. Insight to live.</p>
+        <div class="cc-tag">Implementation</div>
+      </div>
+      <div class="cc reveal d2">
+        <div class="cc-n">06</div>
+        <div class="cc-ico">◯</div>
+        <h3>Agent Readiness Layer</h3>
+        <p>AI is evolving from reading your site to acting on it. Geoke evaluates your Protocol Readiness Score and prepares your brand for AI-driven commerce.</p>
+        <div class="cc-tag">Future-Proof</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════ -->
+<section class="how" id="how">
+  <div class="w">
+    <div class="reveal">
+      <span class="eyebrow">How It Works</span>
+      <h2 class="sh2">Four steps from<br>invisible to authoritative.</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="sn">01</div>
+        <h4>Analyze Your Domain</h4>
+        <p>Enter your website, business category, and top competitors. Geoke builds your baseline across all AI engines in minutes.</p>
+      </div>
+      <div class="step reveal d1">
+        <div class="sn">02</div>
+        <h4>Discover How AI Sees You</h4>
+        <p>Get your Visibility Score, Sentiment Score, AI Position rank, and the full AI Influence Quadrant with competitor overlay.</p>
+      </div>
+      <div class="step reveal d2">
+        <div class="sn">03</div>
+        <h4>Find the Opportunities</h4>
+        <p>See the real questions your audience asks AI. Identify gaps between your content and what AI expects to find.</p>
+      </div>
+      <div class="step reveal d3">
+        <div class="sn">04</div>
+        <h4>Get Content, Deployed</h4>
+        <p>Optimized FAQs, new pages, schema markup — generated and published to your site automatically via native connectors.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     STATS
+════════════════════════════════════════ -->
+<div class="stats reveal">
+  <div class="w">
+    <div class="sgrid">
+      <div class="stat">
+        <div class="sv"><span>6</span></div>
+        <div class="sl">AI platforms tracked simultaneously</div>
+      </div>
+      <div class="stat">
+        <div class="sv">1,000<span>+</span></div>
+        <div class="sl">Digital Twin personas available on Enterprise</div>
+      </div>
+      <div class="stat">
+        <div class="sv"><span>~</span>4<span>m</span></div>
+        <div class="sl">Average time to first AI visibility report</div>
+      </div>
+      <div class="stat">
+        <div class="sv"><span>0</span></div>
+        <div class="sl">Developers needed to deploy content changes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     QUADRANT WOW MOMENT
+════════════════════════════════════════ -->
+<section class="qsec">
+  <div class="w">
+    <div class="qsplit">
+      <div class="qt reveal">
+        <span class="eyebrow">AI Influence Quadrant</span>
+        <h2>Understand your brand's<br>AI positioning in one glance.</h2>
+        <p>Your brand and every competitor mapped across AI Visibility and Sentiment. Four outcomes, immediately readable — and immediately actionable.</p>
+        <div class="qouts">
+          <div class="qo">
+            <div class="qodot" style="background:var(--mint)"></div>
+            <div>
+              <div class="qo-tit">Leader</div>
+              <div class="qo-desc">High visibility + positive sentiment. You're winning.</div>
+            </div>
+          </div>
+          <div class="qo">
+            <div class="qodot" style="background:#0A9E46"></div>
+            <div>
+              <div class="qo-tit">Emerging</div>
+              <div class="qo-desc">Low visibility but positive signals. Scale it.</div>
+            </div>
+          </div>
+          <div class="qo">
+            <div class="qodot" style="background:var(--tx4)"></div>
+            <div>
+              <div class="qo-tit">Weak</div>
+              <div class="qo-desc">Low visibility and authority. You're invisible. Start here.</div>
+            </div>
+          </div>
+          <div class="qo">
+            <div class="qodot" style="background:#FF6555"></div>
+            <div>
+              <div class="qo-tit">Controversial</div>
+              <div class="qo-desc">High visibility, mixed sentiment. Known but not trusted.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qviz reveal d1">
+        <div class="qviz-hd">
+          <span>AI Influence Quadrant</span>
+          <span class="live-dot">LIVE</span>
+        </div>
+        <div class="qviz-ylbl">↑ AI Sentiment</div>
+        <div class="qzones">
+          <div class="qzone zone-l">
+            Leader
+            <div class="bdot-you"></div>
+          </div>
+          <div class="qzone zone-e">
+            Emerging
+            <div class="bdot-c2"></div>
+          </div>
+          <div class="qzone zone-w">
+            Weak
+            <div class="bdot-c1"></div>
+          </div>
+          <div class="qzone zone-c">Controversial</div>
+        </div>
+        <div class="qviz-xlbls">
+          <span>← Low visibility</span>
+          <span>High visibility →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     USE CASES
+════════════════════════════════════════ -->
+<section class="ucases">
+  <div class="w">
+    <div class="reveal">
+      <span class="eyebrow">Who it's for</span>
+      <h2 class="sh2">Built for teams that<br>want to lead in AI search.</h2>
+    </div>
+    <div class="ucgrid">
+      <div class="uc reveal">
+        <div class="uc-ico">🏢</div>
+        <h4>Digital Agencies & GEO Consultants</h4>
+        <p>Deliver AI visibility audits and implementation roadmaps. Multi-client management with Client Center.</p>
+      </div>
+      <div class="uc reveal d1">
+        <div class="uc-ico">🚀</div>
+        <h4>SaaS Companies</h4>
+        <p>Increase brand presence in AI-generated software recommendations. Own your category narrative.</p>
+      </div>
+      <div class="uc reveal d2">
+        <div class="uc-ico">🛍️</div>
+        <h4>E-commerce & Retail</h4>
+        <p>Appear when buyers ask AI for product comparisons. Don't let competitors answer for you.</p>
+      </div>
+      <div class="uc reveal d3">
+        <div class="uc-ico">📈</div>
+        <h4>Startups & Growth Teams</h4>
+        <p>Build AI authority from day one. Grow without ads by becoming the answer AI trusts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     PRICING
+════════════════════════════════════════ -->
+<section class="pricing">
+  <div class="w">
+    <div class="reveal" style="text-align:center;max-width:480px;margin:0 auto 52px">
+      <span class="eyebrow">Pricing</span>
+      <h2 class="sh2">Simple pricing.<br>Serious results.</h2>
+      <p class="sp" style="margin-top:10px;max-width:340px;margin-left:auto;margin-right:auto">
+        Start with a 14-day free trial. No credit card required.
+      </p>
+    </div>
+    <div class="pgrid">
+      <div class="plan reveal">
+        <div class="ptier">Advanced</div>
+        <div class="pprice"><sup>$</sup>58<sub>.5/mo</sub></div>
+        <div class="pdesc">For teams getting started with AI search visibility.</div>
+        <div class="phr"></div>
+        <ul class="pfeats">
+          <li class="pfeat">AI Visibility Dashboard</li>
+          <li class="pfeat">AI Authority Score</li>
+          <li class="pfeat">Content Generator</li>
+          <li class="pfeat">WordPress Connector</li>
+          <li class="pfeat">1 competitor</li>
+          <li class="pfeat">Email support</li>
+        </ul>
+        <a href="/signup" class="pbtn pbtn-ol">Start free trial</a>
+      </div>
+
+      <div class="plan plan-hot reveal d1">
+        <div class="pbadge">Most popular</div>
+        <div class="ptier">Professional</div>
+        <div class="pprice"><sup>$</sup>185<sub>/mo</sub></div>
+        <div class="pdesc">For growing teams and serious marketers who need depth.</div>
+        <div class="phr"></div>
+        <ul class="pfeats">
+          <li class="pfeat">Everything in Advanced</li>
+          <li class="pfeat">Competitor analysis ×2</li>
+          <li class="pfeat">Multilingual (2 languages)</li>
+          <li class="pfeat">100 Digital Twins</li>
+          <li class="pfeat">Shopify Connector</li>
+          <li class="pfeat">Full reporting suite</li>
+          <li class="pfeat">Priority support</li>
+        </ul>
+        <a href="/signup?plan=pro" class="pbtn pbtn-fill">Start free trial</a>
+      </div>
+
+      <div class="plan reveal d2">
+        <div class="ptier">Enterprise</div>
+        <div class="pprice"><sup>$</sup>290<sub>/mo</sub></div>
+        <div class="pdesc">For agencies managing multiple clients and requiring deep AI analysis.</div>
+        <div class="phr"></div>
+        <ul class="pfeats">
+          <li class="pfeat">Everything in Professional</li>
+          <li class="pfeat">Multi-client management</li>
+          <li class="pfeat">Guided AI Audit (GAT)</li>
+          <li class="pfeat">5 competitors</li>
+          <li class="pfeat">1,000 Digital Twins</li>
+          <li class="pfeat">3 languages</li>
+          <li class="pfeat">Client Center</li>
+          <li class="pfeat">Dedicated support</li>
+        </ul>
+        <a href="/demo" class="pbtn pbtn-ol">Book a demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     FINAL CTA
+════════════════════════════════════════ -->
+<section class="ctasec reveal">
+  <div class="cta-glow"></div>
+  <div class="w">
+    <h2>Discover how AI<br>sees your brand.</h2>
+    <p>Run your first analysis in minutes. No credit card required.</p>
+    <div class="cta-row">
+      <a href="/signup" class="btn-hero">
+        Analyze Your Domain
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="/demo" class="btn-ol">Book a demo →</a>
+    </div>
+    <div class="cta-micro">
+      <span>No credit card required</span>
+      <span>Results in minutes</span>
+      <span>Built for agencies and growth teams</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer>
+  <div class="w">
+    <div class="fgrid">
+      <div class="fbrand">
+        <!-- Icon mark only for footer -->
+        <svg height="32" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="fg0" x1="29.2" y1="0" x2="30.4" y2="59.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+            <linearGradient id="fg1" x1="46.4" y1="1.1" x2="13.8" y2="57.2" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+            <linearGradient id="fg2" x1="58.5" y1="12.4" x2="3.6" y2="45.5" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+            <linearGradient id="fg3" x1="59.6" y1="29.8" x2="0" y2="29.8" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+            <linearGradient id="fg4" x1="57.3" y1="46.3" x2="2.6" y2="13.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+            <linearGradient id="fg5" x1="44.8" y1="56.1" x2="14.8" y2="3.7" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
+          </defs>
+          <path opacity=".65" d="M29.8 59.6C33.9 59.6 37.2 46.3 37.2 29.8C37.2 13.3 33.9 0 29.8 0C25.7 0 22.3 13.3 22.3 29.8C22.3 46.3 25.7 59.6 29.8 59.6Z" fill="url(#fg0)"/>
+          <path opacity=".65" d="M36.2 33.5C44.5 19.3 48.2 6.1 44.7 4C41.1 1.9 31.6 11.8 23.3 26.1C15.1 40.3 11.3 53.6 14.9 55.6C18.5 57.7 28 47.8 36.2 33.5Z" fill="url(#fg1)"/>
+          <path opacity=".65" d="M33.5 36.3C47.7 28.0 57.6 18.5 55.6 14.9C53.5 11.3 40.3 15.1 26.1 23.4C11.8 31.6 1.9 41.2 4 44.7C6.1 48.3 19.3 44.5 33.5 36.3Z" fill="url(#fg2)"/>
+          <path opacity=".65" d="M29.8 37.3C46.2 37.3 59.6 33.9 59.6 29.8C59.6 25.7 46.2 22.4 29.8 22.4C13.3 22.4 0 25.7 0 29.8C0 33.9 13.3 37.3 29.8 37.3Z" fill="url(#fg3)"/>
+          <path opacity=".65" d="M55.6 44.7C57.6 41.2 47.7 31.6 33.5 23.4C19.3 15.1 6.0 11.3 4.0 14.9C1.9 18.5 11.8 28.0 26.1 36.3C40.3 44.5 53.5 48.3 55.6 44.7Z" fill="url(#fg4)"/>
+          <path opacity=".65" d="M44.7 55.6C48.2 53.6 44.5 40.3 36.2 26.1C28.0 11.8 18.5 1.9 14.9 4.0C11.3 6.1 15.1 19.3 23.3 33.5C31.6 47.8 41.1 57.7 44.7 55.6Z" fill="url(#fg5)"/>
+        </svg>
+        <p>The AI search authority platform. San Francisco, CA.</p>
+        <div class="fsoc">
+          <a href="#" title="Discord">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057.101 18.08.114 18.1.132 18.11a19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+          </a>
+          <a href="#" title="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="fcol">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="/product/features">Features</a></li>
+          <li><a href="/product/idpbs">IDPBS</a></li>
+          <li><a href="/product/reporting">Reporting</a></li>
+          <li><a href="/product/connectors">Connectors</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+        </ul>
+      </div>
+
+      <div class="fcol">
+        <h5>Agencies</h5>
+        <ul>
+          <li><a href="/agencies/opportunity">Opportunity</a></li>
+          <li><a href="/agencies/advanced-reporting">Advanced Reporting</a></li>
+          <li><a href="/agencies/client-center">Client Center</a></li>
+        </ul>
+      </div>
+
+      <div class="fcol">
+        <h5>Compare</h5>
+        <ul>
+          <li><a href="/compare/geoke-vs-profound">vs Profound</a></li>
+          <li><a href="/compare/geoke-vs-peec-ai">vs Peec AI</a></li>
+          <li><a href="/compare/geoke-vs-seo-tools">vs SEO Tools</a></li>
+        </ul>
+      </div>
+
+      <div class="fcol">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="/company/about">About</a></li>
+          <li><a href="/company/vision">Vision</a></li>
+          <li><a href="/company/careers">Careers</a></li>
+          <li><a href="/company/trust">Trust</a></li>
+          <li><a href="/company/status">Status</a></li>
+        </ul>
+      </div>
+
+      <div class="fcol">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="/legal/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/legal/fair-use">Fair Use</a></li>
+          <li><a href="/legal/terms-of-service">Terms of Service</a></li>
+          <li><a href="/legal/enterprise-agreement">Enterprise</a></li>
+          <li><a href="/legal/cookie-preferences">Cookies</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fbot">
+      <span>© 2026 Geoke, Inc. · San Francisco, CA</span>
+      <div class="fbot-r">
+        <a href="/cdn-cgi/l/email-protection#b8d0ddd4d4d7f8dfddd7d3dd96d9d1"><span class="__cf_email__" data-cfemail="86eee3eaeae9c6e1e3e9ede3a8e7ef">[email&#160;protected]</span></a>
+        <a href="/company/status">Status</a>
+        <a href="/legal/privacy-policy">Privacy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ── Nav border on scroll
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  navEl.classList.toggle('up', window.scrollY > 8);
+}, { passive: true });
+
+// ── Animate bars on load
+window.addEventListener('load', () => {
+  se
