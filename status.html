@@ -8,41 +8,206 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../geoke.css">
+<style>
+:root{
+  --bg0:#04090A;--bg1:#070E0C;--bg2:#0A1510;--bg3:#0D1B14;--bg4:#112118;--bg5:#152819;
+  --mint:#40FFB1;--mint-d:#28E899;--green:#0A9E46;--green-l:#0CC452;
+  --glow:rgba(64,255,177,.13);--glow-sm:rgba(64,255,177,.07);--glow-xs:rgba(64,255,177,.04);
+  --tx:#DFF2EA;--tx2:#6B9E84;--tx3:#3A5E47;--tx4:#1F3629;
+  --b:rgba(64,255,177,.09);--bh:rgba(64,255,177,.20);--bs:rgba(64,255,177,.38);
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:7px;--rl:13px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg1);color:var(--tx);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.025;pointer-events:none;z-index:9999}
+.w{max-width:1100px;margin:0 auto;padding:0 28px;position:relative;z-index:1}
+.sec{padding:80px 0}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 5px var(--mint)}50%{box-shadow:0 0 14px var(--mint)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:56px;border-bottom:1px solid var(--b);background:rgba(7,14,12,.85);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);transition:border-color .3s}
+nav.scrolled{border-bottom-color:var(--bh)}
+.nav-w{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1100px;margin:0 auto;padding:0 28px}
+.nav-logo{display:flex;align-items:center}
+.nav-logo svg{height:22px;width:auto}
+.nav-links{display:flex;align-items:center;list-style:none}
+.nav-links a{padding:5px 12px;font-size:13.5px;font-weight:500;color:var(--tx2);border-radius:var(--r);transition:color .15s,background .15s}
+.nav-links a:hover,.nav-links a.active{color:var(--tx);background:var(--glow-xs)}
+.nav-r{display:flex;align-items:center;gap:8px}
+.btn-ghost{padding:6px 14px;font-size:13.5px;font-weight:600;color:var(--tx3);border-radius:var(--r);transition:color .15s}
+.btn-ghost:hover{color:var(--tx2)}
+.btn-nav{display:inline-flex;align-items:center;padding:7px 17px;font-size:13px;font-weight:700;color:var(--bg0);background:var(--mint);border-radius:var(--r);transition:transform .15s,box-shadow .2s}
+.btn-nav:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(64,255,177,.3)}
+/* PAGE HERO */
+.page-hero{padding:130px 0 72px;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 20% 50%,rgba(64,255,177,.055) 0%,transparent 65%),radial-gradient(ellipse 40% 60% at 90% 20%,rgba(10,158,70,.04) 0%,transparent 55%);pointer-events:none}
+.eyebrow{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mint);margin-bottom:14px}
+.page-hero h1{font-size:clamp(34px,4.5vw,58px);font-weight:800;letter-spacing:-.04em;line-height:1.08;margin-bottom:18px;animation:up .45s ease both}
+.page-hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--mint),var(--mint-d));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-hero p{font-size:clamp(15px,1.8vw,18px);color:var(--tx2);max-width:580px;line-height:1.7;animation:up .45s .08s ease both}
+.page-hero .hero-acts{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;animation:up .45s .14s ease both}
+/* TYPOGRAPHY */
+h2.sh{font-size:clamp(24px,3.2vw,38px);font-weight:800;letter-spacing:-.035em;line-height:1.1;margin-bottom:14px}
+h2.sh em{font-style:normal;color:var(--mint)}
+.lead{font-size:15.5px;color:var(--tx2);line-height:1.7;max-width:520px}
+/* BUTTONS */
+.btn-hero{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;font-size:15px;font-weight:700;color:var(--bg0);background:var(--mint);border-radius:var(--r);transition:transform .2s,box-shadow .2s}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(64,255,177,.3)}
+.btn-ol{display:inline-flex;align-items:center;gap:7px;padding:13px 20px;font-size:15px;font-weight:600;color:var(--tx2);border:1px solid var(--bh);border-radius:var(--r);transition:color .15s,border-color .15s,background .15s}
+.btn-ol:hover{color:var(--tx);border-color:var(--bs);background:var(--glow-sm)}
+.btn-sm{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;font-size:13.5px;font-weight:700;color:var(--bg0);background:var(--mint);border-radius:var(--r);transition:transform .15s,box-shadow .15s}
+.btn-sm:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(64,255,177,.25)}
+/* CARDS */
+.card{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rl);padding:26px;transition:background .2s,border-color .2s}
+.card:hover{background:var(--bg4);border-color:var(--bh)}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:var(--rl);overflow:hidden}
+.card-grid .card{border-radius:0;border:none;position:relative;overflow:hidden}
+.card-grid .card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--mint),transparent);opacity:0;transition:opacity .3s}
+.card-grid .card:hover::after{opacity:.5}
+.card-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:var(--rl);overflow:hidden}
+.card-grid-4 .card{border-radius:0;border:none}
+.feat-ico{font-size:22px;margin-bottom:12px}
+.card h3{font-size:15.5px;font-weight:700;letter-spacing:-.02em;color:var(--tx);margin-bottom:8px}
+.card p{font-size:13px;color:var(--tx2);line-height:1.7}
+.feat-tag{margin-top:14px;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mint)}
+.feat-n{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--tx4);letter-spacing:.12em;margin-bottom:10px}
+/* COMPARE */
+.compare-wrap{overflow-x:auto;border:1px solid var(--b);border-radius:var(--rl);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{padding:12px 16px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(64,255,177,.06);color:var(--tx3)}
+thead th.fc{color:var(--mint)}
+td{padding:11px 16px;font-size:13px;color:var(--tx2);border-top:1px solid var(--b)}
+tr:nth-child(even) td{background:rgba(64,255,177,.02)}
+.yes{color:var(--mint);font-weight:700}
+.no{color:var(--tx4)}
+td.fn{color:var(--tx);font-weight:500}
+.sr td{background:rgba(64,255,177,.04);color:var(--mint);font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px}
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;margin-top:44px}
+.steps::before{content:'';position:absolute;top:24px;left:26px;right:26px;height:1px;background:linear-gradient(90deg,var(--mint),var(--mint-d),var(--green),transparent);z-index:0}
+.step{padding:0 20px 0 0;position:relative;z-index:1}
+.step-n{width:50px;height:50px;border:1px solid var(--bh);border-radius:var(--r);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--mint);margin-bottom:16px;transition:background .2s,border-color .2s,box-shadow .2s}
+.step:hover .step-n{background:var(--glow);border-color:var(--mint);box-shadow:0 0 20px var(--glow)}
+.step h4{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:6px}
+.step p{font-size:12.5px;color:var(--tx2);line-height:1.65}
+/* STATS */
+.stats-bar{border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:var(--bg2)}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-i{padding:32px 26px;border-right:1px solid var(--b);transition:background .2s}
+.stat-i:last-child{border-right:none}
+.stat-i:hover{background:var(--glow-xs)}
+.sv{font-size:42px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1}
+.sv span{background:linear-gradient(135deg,var(--mint),var(--mint-d));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sl{font-size:12.5px;color:var(--tx2);margin-top:6px;line-height:1.45}
+/* PRICING */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.plan{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rl);padding:26px;position:relative;transition:transform .2s,border-color .25s,box-shadow .25s;display:flex;flex-direction:column}
+.plan:hover{transform:translateY(-3px)}
+.plan-hot{border-color:var(--mint);box-shadow:0 0 50px var(--glow-xs)}
+.pbadge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);padding:3px 12px;background:var(--mint);color:var(--bg0);font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:100px;white-space:nowrap}
+.ptier{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px}
+.pprice{display:flex;align-items:flex-start;gap:2px;line-height:1;margin-bottom:8px}
+.pprice-curr{font-size:20px;font-weight:700;color:var(--tx);margin-top:5px}
+.pprice-amt{font-size:48px;font-weight:800;letter-spacing:-.05em;color:var(--tx)}
+.pprice-per{font-size:13px;color:var(--tx3);align-self:flex-end;padding-bottom:7px}
+.pdesc{font-size:12.5px;color:var(--tx2);margin-bottom:18px;line-height:1.5;min-height:36px}
+.phr{height:1px;background:var(--b);margin-bottom:16px}
+.pfeats{display:flex;flex-direction:column;gap:8px;list-style:none;flex:1}
+.pfeat{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--tx2)}
+.pfeat::before{content:'✓';color:var(--mint);font-size:10px;font-weight:700;margin-top:2px;flex-shrink:0}
+.pbtn{display:flex;justify-content:center;align-items:center;margin-top:20px;padding:11px;border-radius:var(--r);font-size:13.5px;font-weight:700;transition:transform .15s,box-shadow .15s,background .15s,border-color .15s}
+.pbtn-ol{border:1px solid var(--bh);color:var(--tx)}
+.pbtn-ol:hover{border-color:var(--bs);background:var(--glow-sm)}
+.pbtn-fill{background:var(--mint);color:var(--bg0);border:1px solid transparent}
+.pbtn-fill:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(64,255,177,.3);background:#52FFB8}
+/* FAQ */
+.faq-list{border:1px solid var(--b);border-radius:var(--rl);overflow:hidden}
+.faq-item{border-bottom:1px solid var(--b)}
+.faq-item:last-child{border-bottom:none}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;font-size:14px;font-weight:600;color:var(--tx);cursor:pointer;transition:background .15s;gap:14px;user-select:none}
+.faq-q:hover{background:var(--glow-xs)}
+.faq-icon{width:20px;height:20px;border:1px solid var(--bh);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:300;color:var(--mint);flex-shrink:0;transition:transform .2s}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{display:none;padding:0 20px 16px;font-size:13.5px;color:var(--tx2);line-height:1.7}
+.faq-item.open .faq-a{display:block}
+/* LISTS */
+.check-list{display:flex;flex-direction:column;gap:8px;list-style:none}
+.check-list li{display:flex;align-items:flex-start;gap:8px;font-size:13.5px;color:var(--tx2)}
+.check-list li::before{content:'✓';color:var(--mint);font-size:11px;font-weight:700;margin-top:2px;flex-shrink:0}
+.bullet-list{display:flex;flex-direction:column;gap:7px;list-style:none}
+.bullet-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--tx2)}
+.bullet-list li::before{content:'→';color:var(--mint);font-size:11px;flex-shrink:0;margin-top:2px}
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+/* INFO BOX */
+.info-box{background:var(--bg3);border:1px solid var(--b);border-left:3px solid var(--mint);border-radius:var(--r);padding:16px 18px}
+.info-box p{font-size:13.5px;color:var(--tx2);line-height:1.65}
+/* DIVIDER */
+.divider{height:1px;background:var(--b)}
+/* TAG */
+.tag{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;background:rgba(64,255,177,.08);border:1px solid var(--b);border-radius:100px;font-size:11px;font-weight:600;color:var(--mint)}
+/* CTA FINAL */
+.cta-sec{padding:80px 0 96px;text-align:center;position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 65% at 50% 50%,rgba(64,255,177,.07) 0%,transparent 70%);pointer-events:none}
+.cta-sec h2{font-size:clamp(30px,4.5vw,52px);font-weight:800;letter-spacing:-.04em;line-height:1.08;max-width:520px;margin:0 auto 14px;position:relative;z-index:1}
+.cta-sec p{font-size:16px;color:var(--tx2);margin-bottom:26px;position:relative;z-index:1}
+.cta-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+.cta-micro{display:flex;justify-content:center;gap:18px;margin-top:14px;font-size:11.5px;color:var(--tx4);flex-wrap:wrap;position:relative;z-index:1}
+.cta-micro span::before{content:'✓ ';color:var(--green-l);font-weight:800}
+/* LEGAL */
+.legal-body{max-width:760px}
+.legal-body h2{font-size:19px;font-weight:700;color:var(--tx);margin:32px 0 8px;letter-spacing:-.02em}
+.legal-body h3{font-size:14.5px;font-weight:700;color:var(--tx2);margin:18px 0 6px}
+.legal-body p{font-size:13.5px;color:var(--tx2);line-height:1.75;margin-bottom:10px}
+.legal-date{font-family:var(--mono);font-size:11px;color:var(--tx3);margin-bottom:32px}
+/* STATUS */
+.status-group{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rl);overflow:hidden;margin-bottom:14px}
+.status-group-title{padding:10px 16px;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx3);background:var(--bg2);border-bottom:1px solid var(--b)}
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--b)}
+.status-row:last-child{border-bottom:none}
+.status-name{font-size:13px;font-weight:600;color:var(--tx)}
+.status-ok{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--mint)}
+.status-ok::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--mint);animation:pulse 2s ease infinite;flex-shrink:0}
+/* FOOTER */
+footer{border-top:1px solid var(--b);padding:56px 0 32px;background:var(--bg2)}
+.fgrid{display:grid;grid-template-columns:185px repeat(5,1fr);gap:24px;margin-bottom:44px}
+.footer-brand p{font-size:11.5px;color:var(--tx3);line-height:1.6;max-width:165px;margin-top:8px}
+.fsoc{display:flex;gap:10px;margin-top:12px}
+.fsoc a{color:var(--tx4);transition:color .15s;display:flex;align-items:center}
+.fsoc a:hover{color:var(--mint)}
+.fcol h5{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin-bottom:11px}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.fcol a{font-size:12.5px;color:var(--tx3);transition:color .15s}
+.fcol a:hover{color:var(--tx)}
+.fbot{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--b);font-size:11.5px;color:var(--tx4)}
+.fbot-r{display:flex;gap:16px}
+.fbot-r a{color:var(--tx4);transition:color .15s}
+.fbot-r a:hover{color:var(--tx2)}
+/* RESPONSIVE */
+@media(max-width:960px){.nav-links{display:none}.card-grid,.card-grid-4{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr;gap:24px}.steps::before{display:none}.sgrid{grid-template-columns:1fr 1fr}.stat-i:nth-child(2){border-right:none}.pgrid{grid-template-columns:1fr;max-width:440px;margin:0 auto}.two-col{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr 1fr}.fbot{flex-direction:column;gap:10px;text-align:center}}
+@media(max-width:600px){.card-grid,.card-grid-4{grid-template-columns:1fr}.page-hero{padding:100px 0 48px}.sec{padding:56px 0}}</style>
 </head>
 <body>
 <nav id="nav">
   <div class="nav-w">
-    <a href="/" class="nav-logo" aria-label="Geoke home"><svg height="22" viewBox="0 0 268 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="lg0" x1="29.2" y1="0" x2="30.4" y2="59.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="lg1" x1="46.4" y1="1.1" x2="13.8" y2="57.2" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="lg2" x1="58.5" y1="12.4" x2="3.6" y2="45.5" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="lg3" x1="59.6" y1="29.8" x2="0" y2="29.8" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="lg4" x1="57.3" y1="46.3" x2="2.6" y2="13.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="lg5" x1="44.8" y1="56.1" x2="14.8" y2="3.7" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-  </defs>
-  <path opacity=".65" d="M29.8 59.6C33.9 59.6 37.2 46.3 37.2 29.8C37.2 13.3 33.9 0 29.8 0C25.7 0 22.3 13.3 22.3 29.8C22.3 46.3 25.7 59.6 29.8 59.6Z" fill="url(#lg0)"/>
-  <path opacity=".65" d="M36.2 33.5C44.5 19.3 48.2 6.1 44.7 4C41.1 1.9 31.6 11.8 23.3 26.1C15.1 40.3 11.3 53.6 14.9 55.6C18.5 57.7 28 47.8 36.2 33.5Z" fill="url(#lg1)"/>
-  <path opacity=".65" d="M33.5 36.3C47.7 28.0 57.6 18.5 55.6 14.9C53.5 11.3 40.3 15.1 26.1 23.4C11.8 31.6 1.9 41.2 4 44.7C6.1 48.3 19.3 44.5 33.5 36.3Z" fill="url(#lg2)"/>
-  <path opacity=".65" d="M29.8 37.3C46.2 37.3 59.6 33.9 59.6 29.8C59.6 25.7 46.2 22.4 29.8 22.4C13.3 22.4 0 25.7 0 29.8C0 33.9 13.3 37.3 29.8 37.3Z" fill="url(#lg3)"/>
-  <path opacity=".65" d="M55.6 44.7C57.6 41.2 47.7 31.6 33.5 23.4C19.3 15.1 6.0 11.3 4.0 14.9C1.9 18.5 11.8 28.0 26.1 36.3C40.3 44.5 53.5 48.3 55.6 44.7Z" fill="url(#lg4)"/>
-  <path opacity=".65" d="M44.7 55.6C48.2 53.6 44.5 40.3 36.2 26.1C28.0 11.8 18.5 1.9 14.9 4.0C11.3 6.1 15.1 19.3 23.3 33.5C31.6 47.8 41.1 57.7 44.7 55.6Z" fill="url(#lg5)"/>
-  <path d="M89.3 51.8C86.2 51.8 83.3 51.2 80.7 50.1C78.1 49.0 75.7 47.5 73.7 45.5C71.8 43.6 70.2 41.2 69.1 38.6C68 35.9 67.4 33.0 67.4 29.9C67.4 26.7 68.0 23.8 69.0 21.1C70.1 18.5 71.6 16.2 73.6 14.2C75.5 12.2 77.8 10.7 80.4 9.6C83.1 8.6 85.9 8.0 89.0 8.0C92.1 8.0 94.9 8.5 97.4 9.6C99.9 10.6 102.0 12.0 103.7 13.7C105.4 15.4 106.6 17.3 107.4 19.3L99.5 23.1C98.8 21.1 97.5 19.4 95.7 18.0C93.8 16.7 91.6 16.0 89.0 16.0C86.4 16.0 84.3 16.6 82.4 17.8C80.4 18.9 78.9 20.6 77.9 22.6C76.9 24.7 76.3 27.1 76.3 29.9C76.3 32.6 76.9 35.1 78.0 37.2C79.1 39.2 80.6 40.9 82.6 42.1C84.5 43.2 86.7 43.8 89.3 43.8C91.2 43.8 93.0 43.4 94.7 42.7C96.5 42.0 97.8 40.9 98.9 39.5C99.9 38.1 100.5 36.4 100.5 34.4V30.9L104.5 34.3H89.0V26.9H109.4V31.4C109.4 34.9 108.8 37.9 107.6 40.4C106.5 43.0 105.0 45.1 103.0 46.8C101.1 48.5 98.9 49.7 96.5 50.6C94.1 51.4 91.7 51.8 89.3 51.8Z" fill="white"/>
-  <path d="M115.8 51.1V8.7H144.6V16.4H124.7V26.0H143.5V33.7H124.7V43.4H144.6V51.1H115.8Z" fill="white"/>
-  <path d="M172.1 51.8C168.8 51.8 165.9 51.2 163.1 50.1C160.3 49.0 157.9 47.5 155.9 45.5C153.8 43.5 152.2 41.2 151.1 38.5C149.9 35.9 149.4 33.0 149.4 29.9C149.4 26.8 149.9 23.9 151.1 21.2C152.2 18.6 153.8 16.3 155.8 14.3C157.9 12.3 160.3 10.8 163.0 9.7C165.8 8.6 168.8 8.0 172.1 8.0C175.3 8.0 178.3 8.6 181.1 9.7C183.8 10.8 186.2 12.3 188.3 14.3C190.3 16.3 191.9 18.6 193.1 21.2C194.2 23.9 194.8 26.8 194.8 29.9C194.8 33.0 194.2 35.9 193.0 38.5C191.9 41.2 190.3 43.5 188.2 45.5C186.2 47.5 183.8 49.0 181.0 50.1C178.3 51.2 175.3 51.8 172.1 51.8ZM172.1 43.8C174.0 43.8 175.8 43.5 177.5 42.8C179.2 42.1 180.6 41.2 181.9 39.9C183.1 38.7 184.1 37.2 184.8 35.5C185.5 33.8 185.9 31.9 185.9 29.9C185.9 27.8 185.5 25.9 184.8 24.3C184.1 22.6 183.2 21.1 181.9 19.9C180.6 18.6 179.2 17.6 177.5 17.0C175.8 16.3 174.0 16.0 172.1 16.0C170.1 16.0 168.3 16.3 166.6 17.0C165.0 17.7 163.5 18.6 162.2 19.9C161.0 21.1 160.0 22.6 159.3 24.3C158.6 25.9 158.3 27.8 158.3 29.9C158.3 31.9 158.6 33.8 159.3 35.5C160.0 37.2 161.0 38.7 162.2 39.9C163.5 41.2 165.0 42.1 166.6 42.8C168.3 43.5 170.1 43.8 172.1 43.8Z" fill="white"/>
-  <path d="M198.8 51.1V8.7H207.7V29.9L205.2 29.1L222.3 8.7H233.5L216.5 28.9L217.1 22.7L233.8 51.1H223.4L213.0 33.2L207.7 39.5V51.1H198.8Z" fill="white"/>
-  <path d="M239.2 51.1V8.7H268.0V16.4H248.1V26.0H266.8V33.7H248.1V43.4H268.0V51.1H239.2Z" fill="white"/>
-</svg></a>
+    <a href="index.html" class="nav-logo"><svg height="22" viewBox="0 0 268 60" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg0" x1="29.2" y1="0" x2="30.4" y2="59.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="lg1" x1="46.4" y1="1.1" x2="13.8" y2="57.2" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="lg2" x1="58.5" y1="12.4" x2="3.6" y2="45.5" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="lg3" x1="59.6" y1="29.8" x2="0" y2="29.8" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="lg4" x1="57.3" y1="46.3" x2="2.6" y2="13.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="lg5" x1="44.8" y1="56.1" x2="14.8" y2="3.7" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient></defs><path opacity=".65" d="M29.8 59.6C33.9 59.6 37.2 46.3 37.2 29.8C37.2 13.3 33.9 0 29.8 0C25.7 0 22.3 13.3 22.3 29.8C22.3 46.3 25.7 59.6 29.8 59.6Z" fill="url(#lg0)"/><path opacity=".65" d="M36.2 33.5C44.5 19.3 48.2 6.1 44.7 4C41.1 1.9 31.6 11.8 23.3 26.1C15.1 40.3 11.3 53.6 14.9 55.6C18.5 57.7 28 47.8 36.2 33.5Z" fill="url(#lg1)"/><path opacity=".65" d="M33.5 36.3C47.7 28.0 57.6 18.5 55.6 14.9C53.5 11.3 40.3 15.1 26.1 23.4C11.8 31.6 1.9 41.2 4 44.7C6.1 48.3 19.3 44.5 33.5 36.3Z" fill="url(#lg2)"/><path opacity=".65" d="M29.8 37.3C46.2 37.3 59.6 33.9 59.6 29.8C59.6 25.7 46.2 22.4 29.8 22.4C13.3 22.4 0 25.7 0 29.8C0 33.9 13.3 37.3 29.8 37.3Z" fill="url(#lg3)"/><path opacity=".65" d="M55.6 44.7C57.6 41.2 47.7 31.6 33.5 23.4C19.3 15.1 6.0 11.3 4.0 14.9C1.9 18.5 11.8 28.0 26.1 36.3C40.3 44.5 53.5 48.3 55.6 44.7Z" fill="url(#lg4)"/><path opacity=".65" d="M44.7 55.6C48.2 53.6 44.5 40.3 36.2 26.1C28.0 11.8 18.5 1.9 14.9 4.0C11.3 6.1 15.1 19.3 23.3 33.5C31.6 47.8 41.1 57.7 44.7 55.6Z" fill="url(#lg5)"/><path d="M89.3 51.8C86.2 51.8 83.3 51.2 80.7 50.1C78.1 49.0 75.7 47.5 73.7 45.5C71.8 43.6 70.2 41.2 69.1 38.6C68 35.9 67.4 33.0 67.4 29.9C67.4 26.7 68.0 23.8 69.0 21.1C70.1 18.5 71.6 16.2 73.6 14.2C75.5 12.2 77.8 10.7 80.4 9.6C83.1 8.6 85.9 8.0 89.0 8.0C92.1 8.0 94.9 8.5 97.4 9.6C99.9 10.6 102.0 12.0 103.7 13.7C105.4 15.4 106.6 17.3 107.4 19.3L99.5 23.1C98.8 21.1 97.5 19.4 95.7 18.0C93.8 16.7 91.6 16.0 89.0 16.0C86.4 16.0 84.3 16.6 82.4 17.8C80.4 18.9 78.9 20.6 77.9 22.6C76.9 24.7 76.3 27.1 76.3 29.9C76.3 32.6 76.9 35.1 78.0 37.2C79.1 39.2 80.6 40.9 82.6 42.1C84.5 43.2 86.7 43.8 89.3 43.8C91.2 43.8 93.0 43.4 94.7 42.7C96.5 42.0 97.8 40.9 98.9 39.5C99.9 38.1 100.5 36.4 100.5 34.4V30.9L104.5 34.3H89.0V26.9H109.4V31.4C109.4 34.9 108.8 37.9 107.6 40.4C106.5 43.0 105.0 45.1 103.0 46.8C101.1 48.5 98.9 49.7 96.5 50.6C94.1 51.4 91.7 51.8 89.3 51.8Z" fill="white"/><path d="M115.8 51.1V8.7H144.6V16.4H124.7V26.0H143.5V33.7H124.7V43.4H144.6V51.1H115.8Z" fill="white"/><path d="M172.1 51.8C168.8 51.8 165.9 51.2 163.1 50.1C160.3 49.0 157.9 47.5 155.9 45.5C153.8 43.5 152.2 41.2 151.1 38.5C149.9 35.9 149.4 33.0 149.4 29.9C149.4 26.8 149.9 23.9 151.1 21.2C152.2 18.6 153.8 16.3 155.8 14.3C157.9 12.3 160.3 10.8 163.0 9.7C165.8 8.6 168.8 8.0 172.1 8.0C175.3 8.0 178.3 8.6 181.1 9.7C183.8 10.8 186.2 12.3 188.3 14.3C190.3 16.3 191.9 18.6 193.1 21.2C194.2 23.9 194.8 26.8 194.8 29.9C194.8 33.0 194.2 35.9 193.0 38.5C191.9 41.2 190.3 43.5 188.2 45.5C186.2 47.5 183.8 49.0 181.0 50.1C178.3 51.2 175.3 51.8 172.1 51.8ZM172.1 43.8C174.0 43.8 175.8 43.5 177.5 42.8C179.2 42.1 180.6 41.2 181.9 39.9C183.1 38.7 184.1 37.2 184.8 35.5C185.5 33.8 185.9 31.9 185.9 29.9C185.9 27.8 185.5 25.9 184.8 24.3C184.1 22.6 183.2 21.1 181.9 19.9C180.6 18.6 179.2 17.6 177.5 17.0C175.8 16.3 174.0 16.0 172.1 16.0C170.1 16.0 168.3 16.3 166.6 17.0C165.0 17.7 163.5 18.6 162.2 19.9C161.0 21.1 160.0 22.6 159.3 24.3C158.6 25.9 158.3 27.8 158.3 29.9C158.3 31.9 158.6 33.8 159.3 35.5C160.0 37.2 161.0 38.7 162.2 39.9C163.5 41.2 165.0 42.1 166.6 42.8C168.3 43.5 170.1 43.8 172.1 43.8Z" fill="white"/><path d="M198.8 51.1V8.7H207.7V29.9L205.2 29.1L222.3 8.7H233.5L216.5 28.9L217.1 22.7L233.8 51.1H223.4L213.0 33.2L207.7 39.5V51.1H198.8Z" fill="white"/><path d="M239.2 51.1V8.7H268.0V16.4H248.1V26.0H266.8V33.7H248.1V43.4H268.0V51.1H239.2Z" fill="white"/></svg></a>
     <ul class="nav-links">
-      <li><a href="/" >Product</a></li>
-      <li><a href="/enterprise.html" >Enterprise</a></li>
-      <li><a href="/company/about.html" class="active">Company</a></li>
-      <li><a href="/pricing.html" >Pricing</a></li>
+      <li><a href="features.html">Product</a></li>
+      <li><a href="enterprise.html">Enterprise</a></li>
+      <li><a href="about.html" class="active">Company</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
     </ul>
     <div class="nav-r">
-      <button class="btn-ghost" onclick="alert('Login coming soon')">Log in</button>
-      <a href="/contacts.html" class="btn-cta">Book a Demo</a>
+      <button class="btn-ghost">Log in</button>
+      <a href="contacts.html" class="btn-nav">Book a Demo</a>
     </div>
   </div>
 </nav>
@@ -55,10 +220,10 @@
   </div>
 </section>
 <section class="sec" style="padding-top:0">
-  <div class="w" style="max-width:760px">
-    <div class="reveal" style="margin-bottom:32px">
-      <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:rgba(64,255,177,.07);border:1px solid var(--bh);border-radius:var(--rl)">
-        <div style="width:10px;height:10px;border-radius:50%;background:var(--mint);animation:pulse 2s ease infinite;flex-shrink:0"></div>
+  <div class="w" style="max-width:720px">
+    <div class="reveal" style="margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(64,255,177,.07);border:1px solid var(--bh);border-radius:var(--rl)">
+        <div style="width:9px;height:9px;border-radius:50%;background:var(--mint);animation:pulse 2s ease infinite;flex-shrink:0"></div>
         <div><div style="font-weight:700;color:var(--tx)">All systems operational</div><div style="font-size:12px;color:var(--tx2);margin-top:2px">Last checked: April 2026</div></div>
       </div>
     </div>
@@ -67,7 +232,6 @@
       <div class="status-row"><span class="status-name">AI Visibility Analysis Engine</span><span class="status-ok">Operational</span></div>
       <div class="status-row"><span class="status-name">Reporting Dashboard</span><span class="status-ok">Operational</span></div>
       <div class="status-row"><span class="status-name">Digital Twins / IDPBS Engine</span><span class="status-ok">Operational</span></div>
-      <div class="status-row"><span class="status-name">Content Generation Module</span><span class="status-ok">Operational</span></div>
     </div>
     <div class="status-group reveal">
       <div class="status-group-title">AI Integrations</div>
@@ -83,75 +247,58 @@
       <div class="status-row"><span class="status-name">WordPress Connector</span><span class="status-ok">Operational</span></div>
       <div class="status-row"><span class="status-name">Shopify Connector</span><span class="status-ok">Operational</span></div>
     </div>
-    <div style="margin-top:24px;font-size:12px;color:var(--tx3)" class="reveal">
-      Subscribe to status updates: <a href="mailto:status@geoke.ai" style="color:var(--mint)">status@geoke.ai</a>
-    </div>
+    <div style="margin-top:20px;font-size:12px;color:var(--tx3)" class="reveal">Subscribe to status updates: <a href="mailto:status@geoke.ai" style="color:var(--mint)">status@geoke.ai</a></div>
   </div>
 </section></main>
 <footer>
   <div class="w">
-    <div class="footer-grid">
+    <div class="fgrid">
       <div class="footer-brand">
-        <svg height="32" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="fmg0" x1="29.2" y1="0" x2="30.4" y2="59.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="fmg1" x1="46.4" y1="1.1" x2="13.8" y2="57.2" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="fmg2" x1="58.5" y1="12.4" x2="3.6" y2="45.5" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="fmg3" x1="59.6" y1="29.8" x2="0" y2="29.8" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="fmg4" x1="57.3" y1="46.3" x2="2.6" y2="13.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-    <linearGradient id="fmg5" x1="44.8" y1="56.1" x2="14.8" y2="3.7" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient>
-  </defs>
-  <path opacity=".65" d="M29.8 59.6C33.9 59.6 37.2 46.3 37.2 29.8C37.2 13.3 33.9 0 29.8 0C25.7 0 22.3 13.3 22.3 29.8C22.3 46.3 25.7 59.6 29.8 59.6Z" fill="url(#fmg0)"/>
-  <path opacity=".65" d="M36.2 33.5C44.5 19.3 48.2 6.1 44.7 4C41.1 1.9 31.6 11.8 23.3 26.1C15.1 40.3 11.3 53.6 14.9 55.6C18.5 57.7 28 47.8 36.2 33.5Z" fill="url(#fmg1)"/>
-  <path opacity=".65" d="M33.5 36.3C47.7 28.0 57.6 18.5 55.6 14.9C53.5 11.3 40.3 15.1 26.1 23.4C11.8 31.6 1.9 41.2 4 44.7C6.1 48.3 19.3 44.5 33.5 36.3Z" fill="url(#fmg2)"/>
-  <path opacity=".65" d="M29.8 37.3C46.2 37.3 59.6 33.9 59.6 29.8C59.6 25.7 46.2 22.4 29.8 22.4C13.3 22.4 0 25.7 0 29.8C0 33.9 13.3 37.3 29.8 37.3Z" fill="url(#fmg3)"/>
-  <path opacity=".65" d="M55.6 44.7C57.6 41.2 47.7 31.6 33.5 23.4C19.3 15.1 6.0 11.3 4.0 14.9C1.9 18.5 11.8 28.0 26.1 36.3C40.3 44.5 53.5 48.3 55.6 44.7Z" fill="url(#fmg4)"/>
-  <path opacity=".65" d="M44.7 55.6C48.2 53.6 44.5 40.3 36.2 26.1C28.0 11.8 18.5 1.9 14.9 4.0C11.3 6.1 15.1 19.3 23.3 33.5C31.6 47.8 41.1 57.7 44.7 55.6Z" fill="url(#fmg5)"/>
-</svg>
+        <svg height="28" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fm0" x1="29.2" y1="0" x2="30.4" y2="59.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="fm1" x1="46.4" y1="1.1" x2="13.8" y2="57.2" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="fm2" x1="58.5" y1="12.4" x2="3.6" y2="45.5" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="fm3" x1="59.6" y1="29.8" x2="0" y2="29.8" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="fm4" x1="57.3" y1="46.3" x2="2.6" y2="13.6" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient><linearGradient id="fm5" x1="44.8" y1="56.1" x2="14.8" y2="3.7" gradientUnits="userSpaceOnUse"><stop stop-color="#40FFB1"/><stop offset="1" stop-color="#0A9E46"/></linearGradient></defs><path opacity=".65" d="M29.8 59.6C33.9 59.6 37.2 46.3 37.2 29.8C37.2 13.3 33.9 0 29.8 0C25.7 0 22.3 13.3 22.3 29.8C22.3 46.3 25.7 59.6 29.8 59.6Z" fill="url(#fm0)"/><path opacity=".65" d="M36.2 33.5C44.5 19.3 48.2 6.1 44.7 4C41.1 1.9 31.6 11.8 23.3 26.1C15.1 40.3 11.3 53.6 14.9 55.6C18.5 57.7 28 47.8 36.2 33.5Z" fill="url(#fm1)"/><path opacity=".65" d="M33.5 36.3C47.7 28.0 57.6 18.5 55.6 14.9C53.5 11.3 40.3 15.1 26.1 23.4C11.8 31.6 1.9 41.2 4 44.7C6.1 48.3 19.3 44.5 33.5 36.3Z" fill="url(#fm2)"/><path opacity=".65" d="M29.8 37.3C46.2 37.3 59.6 33.9 59.6 29.8C59.6 25.7 46.2 22.4 29.8 22.4C13.3 22.4 0 25.7 0 29.8C0 33.9 13.3 37.3 29.8 37.3Z" fill="url(#fm3)"/><path opacity=".65" d="M55.6 44.7C57.6 41.2 47.7 31.6 33.5 23.4C19.3 15.1 6.0 11.3 4.0 14.9C1.9 18.5 11.8 28.0 26.1 36.3C40.3 44.5 53.5 48.3 55.6 44.7Z" fill="url(#fm4)"/><path opacity=".65" d="M44.7 55.6C48.2 53.6 44.5 40.3 36.2 26.1C28.0 11.8 18.5 1.9 14.9 4.0C11.3 6.1 15.1 19.3 23.3 33.5C31.6 47.8 41.1 57.7 44.7 55.6Z" fill="url(#fm5)"/></svg>
         <p>The AI search authority platform. San Francisco, CA.</p>
-        <div class="footer-soc">
-          <a href="#" title="Discord"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057.101 18.08.114 18.1.132 18.11a19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg></a>
-          <a href="#" title="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+        <div class="fsoc">
+          <a href="#" title="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057.101 18.08.114 18.1.132 18.11a19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg></a>
+          <a href="#" title="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
         </div>
       </div>
-      <div class="footer-col"><h5>Product</h5><ul>
-        <li><a href="/product/features.html">Features</a></li>
-        <li><a href="/product/idpbs.html">IDPBS</a></li>
-        <li><a href="/product/reporting.html">Reporting</a></li>
-        <li><a href="/product/connectors.html">Connectors</a></li>
-        <li><a href="/pricing.html">Pricing</a></li>
+      <div class="fcol"><h5>Product</h5><ul>
+        <li><a href="features.html">Features</a></li>
+        <li><a href="idpbs.html">IDPBS</a></li>
+        <li><a href="reporting.html">Reporting</a></li>
+        <li><a href="connectors.html">Connectors</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
       </ul></div>
-      <div class="footer-col"><h5>Agencies</h5><ul>
-        <li><a href="/agencies/opportunity.html">Opportunity</a></li>
-        <li><a href="/agencies/advanced-reporting.html">Advanced Reporting</a></li>
-        <li><a href="/agencies/client-center.html">Client Center</a></li>
+      <div class="fcol"><h5>Agencies</h5><ul>
+        <li><a href="opportunity.html">Opportunity</a></li>
+        <li><a href="advanced-reporting.html">Advanced Reporting</a></li>
+        <li><a href="client-center.html">Client Center</a></li>
       </ul></div>
-      <div class="footer-col"><h5>Compare</h5><ul>
-        <li><a href="/compare/geoke-vs-profound.html">vs Profound</a></li>
-        <li><a href="/compare/geoke-vs-peec-ai.html">vs Peec AI</a></li>
-        <li><a href="/compare/geoke-vs-seo-tools.html">vs SEO Tools</a></li>
+      <div class="fcol"><h5>Compare</h5><ul>
+        <li><a href="geoke-vs-profound.html">vs Profound</a></li>
+        <li><a href="geoke-vs-peec-ai.html">vs Peec AI</a></li>
+        <li><a href="geoke-vs-seo-tools.html">vs SEO Tools</a></li>
       </ul></div>
-      <div class="footer-col"><h5>Company</h5><ul>
-        <li><a href="/company/about.html">About</a></li>
-        <li><a href="/company/vision.html">Vision</a></li>
-        <li><a href="/company/careers.html">Careers</a></li>
-        <li><a href="/company/trust.html">Trust</a></li>
-        <li><a href="/company/status.html">Status</a></li>
+      <div class="fcol"><h5>Company</h5><ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="vision.html">Vision</a></li>
+        <li><a href="careers.html">Careers</a></li>
+        <li><a href="trust.html">Trust</a></li>
+        <li><a href="status.html">Status</a></li>
       </ul></div>
-      <div class="footer-col"><h5>Legal</h5><ul>
-        <li><a href="/legal/privacy-policy.html">Privacy Policy</a></li>
-        <li><a href="/legal/fair-use.html">Fair Use</a></li>
-        <li><a href="/legal/terms-of-service.html">Terms of Service</a></li>
-        <li><a href="/legal/enterprise-agreement.html">Enterprise</a></li>
-        <li><a href="/legal/cookie-preferences.html">Cookies</a></li>
+      <div class="fcol"><h5>Legal</h5><ul>
+        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a href="fair-use.html">Fair Use</a></li>
+        <li><a href="terms-of-service.html">Terms of Service</a></li>
+        <li><a href="enterprise-agreement.html">Enterprise</a></li>
+        <li><a href="cookie-preferences.html">Cookies</a></li>
       </ul></div>
     </div>
-    <div class="footer-bot">
+    <div class="fbot">
       <span>© 2026 Geoke, Inc. · San Francisco, CA</span>
-      <div class="footer-bot-r">
+      <div class="fbot-r">
         <a href="mailto:hello@geoke.ai">hello@geoke.ai</a>
-        <a href="/company/status.html">Status</a>
-        <a href="/legal/privacy-policy.html">Privacy</a>
+        <a href="status.html">Status</a>
+        <a href="privacy-policy.html">Privacy</a>
       </div>
     </div>
   </div>
@@ -160,7 +307,10 @@
 const io=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('in')),{threshold:.1,rootMargin:'0px 0px -30px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>8),{passive:true});
-document.querySelectorAll('.faq-q').forEach(q=>q.addEventListener('click',()=>q.parentElement.classList.toggle('open')));
+document.querySelectorAll('.faq-q').forEach(q=>q.addEventListener('click',()=>{
+  const it=q.parentElement;it.classList.toggle('open');
+  const ic=q.querySelector('.faq-icon');if(ic)ic.textContent=it.classList.contains('open')?'×':'+';
+}));
 </script>
 </body>
 </html>
